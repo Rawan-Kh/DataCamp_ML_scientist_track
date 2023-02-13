@@ -102,6 +102,14 @@ print(fifa[['scaled_sliding_tackle', 'scaled_aggression', 'cluster_labels']].gro
 sns.scatterplot(x='scaled_sliding_tackle', y='scaled_aggression', hue='cluster_labels', data=fifa)
 plt.show()
 
+
+# Notice how long it took to run hierarchical clustering on a few thousand data points.
+# In the next chapter, you will explore clusters in data through k-means clustering.
+# scaled_sliding_tackle  scaled_aggression
+#     cluster_labels                                          
+#     1                                2.99               4.35
+#     2                                0.74               1.94
+#     3                                1.34               3.62
 -----
 
 
