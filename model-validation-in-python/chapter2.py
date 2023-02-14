@@ -15,5 +15,6 @@ X_train, X_val, y_train, y_val  =\
    train_test_split(X_temp, y_temp, test_size=0.25, random_state=1111)
 
 # You now have training, validation, and testing datasets, but do you know _when_ you need both validation and testing datasets?
+# Anytime we are evaluating model performance repeatedly we need to create training, validation, and testing datasets
 ---------------
 
