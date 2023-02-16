@@ -19,3 +19,7 @@ print(sample2['Class'].value_counts())
 #     negative     77
 #     Name: Class, dtype: int64
 -------------------
+
+# If our models are not generalizing well or if we have limited data, we should be careful using a single training/validation split.
+# You should use the next lesson's topic: cross-validation.
+----------------
