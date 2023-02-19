@@ -37,6 +37,35 @@ print(books_melted)
 # This is helpful when you don't want to include all variables in a graph, for example
 ----------
 
+# Melt the rating and rating_count using title, authors and publisher as identifiers
+books_ratings = books_gothic.melt(id_vars=['title','authors','publisher'],
+                                     value_vars=['rating','rating_count'])
+
+# Print books_ratings
+print(books_ratings)
+---------
+# Assign the name feature to the new variable column
+books_ratings = books_gothic.melt(id_vars=['title', 'authors', 'publisher'], 
+                                  value_vars=['rating', 'rating_count'], 
+                                  var_name='feature')
+
+# Print books_ratings
+print(books_ratings)
+
+------
+# Assign the name number to the new column containing the values
+books_ratings = books_gothic.melt(id_vars=['title', 'authors', 'publisher'], 
+                                  value_vars=['rating', 'rating_count'], 
+                                  var_name='feature', 
+                                 value_name='number')
+
+# Print books_ratings
+print(books_ratings)
+
+# Using clear names for the new value and variable columns allows you to have a customized DataFrame. This feature helps data scientists share clean and useful data
+----------------
+
+
 
 
 
