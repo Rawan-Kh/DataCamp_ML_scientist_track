@@ -64,7 +64,79 @@ print(books_ratings)
 
 # Using clear names for the new value and variable columns allows you to have a customized DataFrame. This feature helps data scientists share clean and useful data
 ----------------
+# Reshape wide to long using title as index and version as new name, and extracting isbn prefix 
+isbn_long = pd.wide_to_long(golden_age, 
+                            stubnames='isbn', 
+                            i='title', 
+                            j='version')
 
+# Print isbn_long
+print(isbn_long)
+----------
+# Reshape wide to long using title and authors as index and version as new name, and prefix as wide column prefix
+prefix_long = pd.wide_to_long(golden_age, 
+                            stubnames='prefix', 
+                            i=['title','authors'], 
+                            j='version')
+
+# Print prefix_long
+print(prefix_long)
+-----------
+# Reshape wide to long using title and authors as index and version as new name, and prefix and isbn as wide column prefixes 
+all_long = pd.wide_to_long(golden_age, 
+                           stubnames=['isbn', 'prefix'], 
+                           i=['title', 'authors'], 
+                           j='version')
+
+# Print all_long
+print(all_long)
+
+-------------
+# Reshape using author and title as index, code as new name and getting the prefix language and publisher
+the_code_long = pd.wide_to_long(books_brown, 
+                           stubnames=['language', 'publisher'], 
+                           i=['author', 'title'], 
+                           j='code')
+
+# Print the_code_long
+print(the_code_long)
+--------
+# Specify underscore as the character that separates the variable names
+the_code_long = pd.wide_to_long(books_brown, 
+                                stubnames=['language', 'publisher'], 
+                                i=['author', 'title'], 
+                                j='code', sep='_')
+
+# Print the_code_long
+print(the_code_long)
+----------
+# Specify that wide columns have a suffix containing words
+the_code_long = pd.wide_to_long(books_brown, 
+                                stubnames=['language', 'publisher'], 
+                                i=['author', 'title'], 
+                                j='code', 
+                                sep='_', 
+                                suffix='\w+')
+
+# Print the_code_long
+print(the_code_long)
+
+-----------
+# Modify books_hunger by resetting the index without dropping it
+books_hunger.reset_index(drop=False, inplace=True)
+
+# Reshape using title and language as index, feature as new name, publication and page as prefix separated by space and ending in a word
+publication_features = pd.wide_to_long(books_hunger, 
+                                stubnames=['publication', 'page'], 
+                                i=['title', 'language'], 
+                                j='feature', 
+                                sep=' ', 
+                                suffix='\w+')
+
+# Print publication_features
+print(publication_features)
+
+----------
 
 
 
