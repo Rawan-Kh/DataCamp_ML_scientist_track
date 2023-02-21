@@ -137,6 +137,83 @@ publication_features = pd.wide_to_long(books_hunger,
 print(publication_features)
 
 ----------
+# Split the index of books_dys by the hyphen 
+books_dys.index = books_dys.index.str.split('-')
+
+# Print books_dys
+print(books_dys)
+--------
+# Get the first element after splitting the index of books_dys
+books_dys.index = books_dys.index.str.split('-').str.get(0)
+
+# Print books_dys
+print(books_dys)
+
+----------
+# Split by the hyphen the index of books_dys
+books_dys.index = books_dys.index.str.split('-').str.get(0)
+
+# Concatenate the index with the list author_list separated by a hyphen
+books_dys.index = books_dys.index.str.cat(author_list, sep='-')
+
+# Print books_dys
+print(books_dys)
+#  The str attribute of pandas makes it easy to work with strings, even when they are in the index,
+# which is something that would be very difficult to handle otherwise!
+--------
+
+# Concatenate the title and subtitle separated by "and" surrounded by spaces
+hp_books['full_title'] = hp_books['title'].str.cat( hp_books['subtitle'], sep =' and ') 
+
+# Print hp_books
+print(hp_books)
+----------
+# Concatenate the title and subtitle separated by "and" surrounded by spaces
+hp_books['full_title'] = hp_books['title'].str.cat(hp_books['subtitle'], sep =" and ") 
+
+# Split the authors into writer and illustrator columns
+hp_books[['writer', 'illustrator']] = hp_books['authors'].str.split('/', expand=True) 
+
+# Print hp_books
+print(hp_books)
+
+----------
+# Concatenate the title and subtitle separated by "and" surrounded by spaces
+hp_books['full_title'] = hp_books['title'].str.cat(hp_books['subtitle'], sep =" and ") 
+
+# Split the authors into writer and illustrator columns
+hp_books[['writer', 'illustrator']] = hp_books['authors'].str.split('/', expand=True)
+
+# Melt goodreads and amazon columns into a single column
+hp_melt = hp_books.melt(id_vars=['full_title','writer'], 
+                        var_name='source', 
+                        value_vars=['goodreads','amazon'], 
+                        value_name='rating')
+
+# Print hp_melt
+print(hp_melt)
+# In this exercise, you managed to create new features by splitting and joining columns together. 
+# This can help you in your future analysis; particularly, when you are tidying your dataset
+----------
+
+# Split main_title by a colon and assign it to two columns named title and subtitle 
+books_sh[['title', 'subtitle']] = books_sh['main_title'].str.split(':', expand=True)
+
+# Split version by a space and assign the second element to the column named volume 
+books_sh['volume'] = books_sh['version'].str.split(' ').str.get(1)
+
+# Drop the main_title and version columns modifying books_sh
+books_sh.drop(['main_title', 'version'], axis=1, inplace=True)
+
+# Reshape using title, subtitle and volume as index, name feature the new variable from columns starting with number, separated by undescore and ending in words 
+sh_long = pd.wide_to_long(books_sh, stubnames='number', i=['title', 'subtitle', 'volume'],j='feature', sep='_', suffix='\w+')
+
+# Print sh_long 
+print(sh_long)
+
+# Splitting string columns into new columns creates cleaner features to prepare for reshaping. Having a clean and understandable dataset is one of the first tasks before performing any analysis.
+-------------
+
 
 
 
