@@ -85,3 +85,54 @@ this_title = response.xpath( '/html/head/title/text()' ).extract_first()
 print_url_title( this_url, this_title )
 
 -------------
+# Create a CSS Locator string to the desired hyperlink elements
+css_locator = 'a.course-block__link'
+
+# Select the hyperlink elements from response and sel
+response_as = response.css(css_locator)
+sel_as = sel.css(css_locator)
+
+# Examine similarity
+nr = len( response_as )
+ns = len( sel_as )
+for i in range( min(nr, ns, 2) ):
+  print( "Element %d from response: %s" % (i+1, response_as[i]) )
+  print( "Element %d from sel: %s" % (i+1, sel_as[i]) )
+  print( "" )
+
+<!-- Surely you see now that if we use a response variable to select elements, we are back in the realm of Selectors and SelectorLists. -->
+------------
+# Select all desired div elements
+divs = response.css( 'div.course-block' )
+
+# Take the first div element
+first_div = divs[0]
+
+# Extract the text from the h4 element in first_div
+h4_text = first_div.css('h4::text').extract_first()
+
+# Print out the text
+print( "The text from the h4 element is:", h4_text )
+<!-- That's right -- the variable divs was a SelectorList, so the first element in this list is a Selector object. -->
+--------------
+# Create a SelectorList of the course titles
+crs_title_els = response.css( 'h4::text' )
+
+# Extract the course titles 
+crs_titles = crs_title_els.extract()
+
+# Print out the course titles 
+for el in crs_titles:
+  print( ">>", el )
+
+-------
+# Calculate the number of children of the mystery element
+how_many_kids = len( mystery.xpath( './*' ) )
+
+# Print out the number
+print( "The number of elements you selected was:", how_many_kids )
+
+<!-- Now you know the trick! In xpath, you can use the XPath string './*' to direct to the children of the currently selected element! -->
+-----------
+
+
