@@ -120,5 +120,115 @@ for i in range(len(y_test)):
 print("Predicted {0} correctly out of {1} test examples".format(n_correct, len(y_test)))
 # You just trained a support vector machine for recognizing intents
 ------------
+# Define included_entities
+include_entities = ['DATE', 'ORG', 'PERSON']
 
+# Define extract_entities()
+def extract_entities(message):
+    # Create a dict to hold the entities
+    ents = dict.fromkeys(include_entities)
+    # Create a spacy document
+    doc = nlp(message)
+    for ent in doc.ents:
+        if ent.label_ in include_entities:
+            # Save interesting entities
+            ents[ent.label_] = ent.text
+    return ents
 
+print(extract_entities('friends called Mary who have worked at Google since 2010'))
+print(extract_entities('people who graduated from MIT in 1999'))
+
+# Great work. Your bot can now make use of spaCy's built-in entity recognizer.
+# output:
+#     {'DATE': '2010', 'ORG': None, 'PERSON': None}
+#     {'DATE': None, 'ORG': None, 'PERSON': None}
+-----------------
+
+# Create the document
+doc = nlp("let's see that jacket in red and some blue jeans")
+
+# Iterate over parents in parse tree until an item entity is found
+def find_parent_item(word):
+    # Iterate over the word's ancestors
+    for parent in word.ancestors:
+        # Check for an "item" entity
+        if entity_type(parent) == "item":
+            return parent.text
+    return None
+
+# For all color entities, find their parent item
+def assign_colors(doc):
+    # Iterate over the document
+    for word in doc:
+        # Check for "color" entities
+        if entity_type(word) == "color":
+            # Find the parent
+            item =  find_parent_item(word)
+            print("item: {0} has color : {1}".format(item, word))
+
+# Assign the colors
+assign_colors(doc) 
+
+# output:
+#     item: jacket has color : red
+#     item: jeans has color : blue
+# Your bot can now figure out simple relationships between entities.
+-----------
+
+# Import necessary modules
+from rasa_nlu.converters import load_data
+from rasa_nlu.config import RasaNLUConfig
+from rasa_nlu.model import Trainer
+
+# Create args dictionary
+args = {"pipeline": "spacy_sklearn"}
+
+# Create a configuration and trainer
+config = RasaNLUConfig(cmdline_args=args)
+trainer = Trainer(config)
+
+# Load the training data
+training_data = load_data("./training_data.json")
+
+# Create an interpreter by training the model
+interpreter = trainer.train(training_data)
+
+# Test the interpreter
+print(interpreter.parse("I'm looking for a Mexican restaurant in the North of town"))
+
+# Congrats! You just trained an intent and entity recognizer without having to create any arrays.
+# output:
+#     Fitting 2 folds for each of 6 candidates, totalling 12 fits
+# {'intent': {'name': 'restaurant_search', 'confidence': 0.6627604390878398}, 'entities': [{'start': 18, 'end': 25, 'value': 'mexican', 'entity': 'cuisine', 'extractor': 'ner_crf'}, {'start': 44, 'end': 49, 'value': 'north', 'entity': 'location', 'extractor': 'ner_crf'}], 'intent_ranking': [{'name': 'restaurant_search', 'confidence': 0.6627604390878398}, {'name': 'goodbye', 'confidence': 0.14633725788681204}, {'name': 'affirm', 'confidence': 0.09756426473688806}, {'name': 'greet', 'confidence': 0.09333803828846025}], 'text': "I'm looking for a Mexican restaurant in the North of town"}
+-----------
+
+# Import necessary modules
+from rasa_nlu.config import RasaNLUConfig
+from rasa_nlu.model import Trainer
+
+pipeline = [
+    "nlp_spacy",
+    "tokenizer_spacy",
+    "ner_crf"
+]
+
+# Create a config that uses this pipeline
+config = RasaNLUConfig(cmdline_args={"pipeline": pipeline})
+
+# Create a trainer that uses this config
+trainer = Trainer(config)
+
+# Create an interpreter by training the model
+interpreter = trainer.train(training_data)
+
+# Parse some messages
+print(interpreter.parse("show me Chinese food in the centre of town"))
+print(interpreter.parse("I want an Indian restaurant in the west"))
+print(interpreter.parse("are there any good pizza places in the center?"))
+
+# You just built a custom entity recogniser with Rasa NLU.
+# output:
+#     {'intent': {'name': '', 'confidence': 0.0}, 'entities': [{'start': 28, 'end': 34, 'value': 'centre', 'entity': 'location', 'extractor': 'ner_crf'}], 'text': 'show me Chinese food in the centre of town'}
+#     {'intent': {'name': '', 'confidence': 0.0}, 'entities': [{'start': 10, 'end': 16, 'value': 'indian', 'entity': 'cuisine', 'extractor': 'ner_crf'}, {'start': 35, 'end': 39, 'value': 'west', 'entity': 'location', 'extractor': 'ner_crf'}], 'text': 'I want an Indian restaurant in the west'}
+#     {'intent': {'name': '', 'confidence': 0.0}, 'entities': [{'start': 39, 'end': 45, 'value': 'center', 'entity': 'location', 'extractor': 'ner_crf'}], 'text': 'are there any good pizza places in the center?'}
+-----------
