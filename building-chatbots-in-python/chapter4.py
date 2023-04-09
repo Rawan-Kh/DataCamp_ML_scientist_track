@@ -135,4 +135,96 @@ send_messages([
 ])
 # Your bot can now follow up on its own suggestions!
 -------------
+# Define the states
+INIT=0
+AUTHED=1
+CHOOSE_COFFEE=2
+ORDERED=3
 
+# Define the policy rules
+policy_rules = {
+    (INIT, "order"): (INIT, "you'll have to log in first, what's your phone number?", AUTHED),
+    (INIT, "number"): (AUTHED, "perfect, welcome back!", None),
+    (AUTHED, "order"): (CHOOSE_COFFEE, "would you like Colombian or Kenyan?", None),    
+    (CHOOSE_COFFEE, "specify_coffee"): (ORDERED, "perfect, the beans are on their way!", None)
+}
+
+# Define send_messages()
+def send_messages(messages):
+    state = INIT
+    pending = None
+    for msg in messages:
+        state, pending = send_message(state, pending, msg)
+
+# Send the messages
+send_messages([
+    "I'd like to order some coffee",
+    "555-1234",
+    "kenyan"
+])
+# You just built a bot that can handle some fairly complicated conversations!
+-----------------
+
+# Define chitchat_response()
+def chitchat_response(message):
+    # Call match_rule()
+    response, phrase = match_rule(eliza_rules , message)
+    # Return none if response is "default"
+    if response == "default":
+        return None
+    if '{0}' in response:
+        # Replace the pronouns of phrase
+        phrase = replace_pronouns(phrase)
+        # Calculate the response
+        response = response.format(phrase)
+    return response
+
+# You've put it all together and your bot can now interleave chit-chat and functional conversation.
+---------------
+
+# Define send_message()
+def send_message(state, pending, message):
+    print("USER : {}".format(message))
+    response = chitchat_response(message)
+    if response is not None:
+        print("BOT : {}".format(response))
+        return state, None
+    
+    # Calculate the new_state, response, and pending_state
+    new_state, response, pending_state = policy_rules[(state, interpret(message))]
+    print("BOT : {}".format(response))
+    if pending is not None:
+        new_state, response, pending_state = policy_rules[pending]
+        print("BOT : {}".format(response))        
+    if pending_state is not None:
+        pending = (pending_state, interpret(message))
+    return new_state, pending
+
+# Define send_messages()
+def send_messages(messages):
+    state = INIT
+    pending = None
+    for msg in messages:
+        state, pending = send_message(state, pending, msg)
+
+# Send the messages
+send_messages([
+    "I'd like to order some coffee",
+    "555-12345",
+    "do you remember when I ordered 1000 kilos by accident?",
+    "kenyan"
+])  
+
+----------------
+# Feed the seed text into the neural network
+seed = "i'm gonna punch lenny in the back of the"
+
+# Iterate over the different temperature values
+for temperature in [0.2, 0.5, 1.0, 1.2]:
+    print("\nGenerating text with riskiness : {}\n".format(temperature))
+    # Call the sample_text function
+    print(sample_text(seed, temperature))
+    
+----------------------
+# You just generated some text with a neural network. Scroll through the output to see the text generated with different values of the temperature parameter. And congratulations on completing the course! If you're itching to continue learning about chatbots, remember to check out this tutorial by Alan on how to connect your bot to Facebook Messenger!
+------------------
