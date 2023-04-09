@@ -242,4 +242,5 @@ for match_id, start, end in matcher(doc):
 #     Sudan --> Sudan
 #     Congo --> Congo
 #     Haiti --> Haiti
+# Now that you've practiced combining predictions with rule-based information extraction, you're ready for chapter 3, which will teach you everything about spaCy's processing pipelines.
 ------------
