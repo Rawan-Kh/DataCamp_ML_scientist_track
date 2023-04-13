@@ -201,8 +201,4 @@ print(find_persons(tc))
 # The article was related to Facebook and our function correctly identified both the people mentioned. You can now see how NER could be used in a variety of applications. Publishers may use a technique like this to classify news articles by the people mentioned in them. A question answering system could also use something like this to answer questions such as 'Who are the people mentioned in this passage?'. With this, we come to an end of this chapter. In the next, we will learn how to conduct vectorization on documents.
 ------
 
-# "men may come and men may go but i go on forever"?
-# (0, 0, 1, 1, 0, 1, 0, 1, 2, 1, 2, 2, 1, 0, 0)
-#  the vocabulary has 15 word tokens!
-# That is, indeed, the correct answer. Each value in the vector corresponds to the frequency of the corresponding word in the vocabulary.
 ---------
