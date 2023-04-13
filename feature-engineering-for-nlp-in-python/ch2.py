@@ -102,3 +102,107 @@ print(ted['transcript'])
 # You have preprocessed all the TED talk transcripts contained in ted and it is now in a good shape to perform operations such as vectorization (as we will soon see how). You now have a good understanding of how text preprocessing works and why it is important. In the next lessons, we will move on to generating word level features for our texts.
 ----------
 
+# Load the en_core_web_sm model
+nlp = spacy.load('en_core_web_sm')
+
+# Create a Doc object
+doc = nlp(lotf)
+
+# Generate tokens and pos tags
+pos = [(token.text, token.pos_) for token in doc]
+print(pos)
+# output:
+#     [('He', 'PRON'), ('found', 'VERB'), ('himself', 'PRON'), ('understanding', 'VERB'), ('the', 'DET'), ('wearisomeness', 'NOUN'), ('of', 'ADP'), ('this', 'DET'), ('life', 'NOUN'), (',', 'PUNCT'), ('where', 'ADV'), ('every', 'DET'), ('path', 'NOUN'), ('was', 'VERB'), ('an', 'DET'), ('improvisation', 'NOUN'), ('and', 'CCONJ'), ('a', 'DET'), ('considerable', 'ADJ'), ('part', 'NOUN'), ('of', 'ADP'), ('one', 'PRON'), ('’s', 'ADV'), ('waking', 'VERB'), ('life', 'NOUN'), ('was', 'AUX'), ('spent', 'VERB'), ('watching', 'VERB'), ('one', 'NUM'), ('’s', 'NOUN'), ('feet', 'NOUN'), ('.', 'PUNCT')]
+
+# Examine the various POS tags attached to each token and evaluate if they make intuitive sense to you. You will notice that they are indeed labelled correctly according to the standard rules of English grammar.
+-------
+nlp = spacy.load('en_core_web_sm')
+
+# Returns number of proper nouns
+def proper_nouns(text, model=nlp):
+  	# Create doc object
+    doc = model(text)
+    # Generate list of POS tags
+    pos = [token.pos_ for token in doc]
+    
+    # Return number of proper nouns
+    return pos.count('PROPN')
+
+print(proper_nouns("Abdul, Bill and Cathy went to the market to buy apples.", nlp))
+---------
+nlp = spacy.load('en_core_web_sm')
+
+# Returns number of other nouns
+def nouns(text, model=nlp):
+  	# Create doc object
+    doc = model(text)
+    # Generate list of POS tags
+    pos = [token.pos_ for token in doc]
+    
+    # Return number of other nouns
+    return pos.count('NOUN')
+
+print(nouns("Abdul, Bill and Cathy went to the market to buy apples.", nlp))
+
+# You now know how to write functions that compute the number of instances of a particulat POS tag in a given piece of text. In the next exercise, we will use these functions to generate features from text in a dataframe.
+-------
+
+headlines['num_propn'] = headlines['title'].apply(proper_nouns)
+
+# Compute mean of proper nouns
+real_propn = headlines[headlines['label'] == 'REAL']['num_propn'].mean()
+fake_propn = headlines[headlines['label'] == 'FAKE']['num_propn'].mean()
+
+# Print results
+print("Mean no. of proper nouns in real and fake headlines are %.2f and %.2f respectively"%(real_propn, fake_propn))
+
+---------
+headlines['num_noun'] = headlines['title'].apply(nouns)
+
+# Compute mean of other nouns
+real_noun = headlines[headlines['label'] == 'REAL']['num_noun'].mean()
+fake_noun = headlines[headlines['label'] == 'FAKE']['num_noun'].mean()
+
+Print results
+print("Mean no. of other nouns in real and fake headlines are %.2f and %.2f respectively"%(real_noun, fake_noun))
+
+# You now know to construct features using POS tags information. Notice how the mean number of proper nouns is considerably higher for fake news than it is for real news. The opposite seems to be true in the case of other nouns. This fact can be put to great use in designing fake news detectors.
+----------
+# Load the required model
+nlp = spacy.load('en_core_web_sm')
+
+# Create a Doc instance 
+text = 'Sundar Pichai is the CEO of Google. Its headquarters is in Mountain View.'
+doc = nlp(text)
+
+# Print all named entities and their labels
+for ent in doc.ents:
+    print(ent.text, ent.label_)
+
+# output:
+#     Google ORG
+#     Mountain View GPE
+# Notice how the model correctly predicted the labels of Google and Mountain View but mislabeled Sundar Pichai as an organization. As discussed in the video, the predictions of the model depend strongly on the data it is trained on. It is possible to train spaCy models on your custom data. You will learn to do this in more advanced NLP courses.
+--------
+
+def find_persons(text):
+  # Create Doc object
+  doc = nlp(text)
+  
+  # Identify the persons
+  persons = [ent.text for ent in doc.ents if ent.label_ == 'PERSON']
+  
+  # Return persons
+  return persons
+
+print(find_persons(tc))
+#  output:
+#     ['Sheryl Sandberg', 'Mark Zuckerberg']
+# The article was related to Facebook and our function correctly identified both the people mentioned. You can now see how NER could be used in a variety of applications. Publishers may use a technique like this to classify news articles by the people mentioned in them. A question answering system could also use something like this to answer questions such as 'Who are the people mentioned in this passage?'. With this, we come to an end of this chapter. In the next, we will learn how to conduct vectorization on documents.
+------
+
+# "men may come and men may go but i go on forever"?
+# (0, 0, 1, 1, 0, 1, 0, 1, 2, 1, 2, 2, 1, 0, 0)
+#  the vocabulary has 15 word tokens!
+# That is, indeed, the correct answer. Each value in the vector corresponds to the frequency of the corresponding word in the vocabulary.
+---------
